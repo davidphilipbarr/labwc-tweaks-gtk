@@ -45,7 +45,7 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	widget = gtk_label_new("corner radius");
 	gtk_widget_set_halign(widget, GTK_ALIGN_START);
 	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
-	GtkAdjustment *adjustment = gtk_adjustment_new(0, 0, 10, 1, 2, 0);
+	GtkAdjustment *adjustment = gtk_adjustment_new(0, 0, 20, 1, 2, 0);
 	state->widgets.corner_radius = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment), 1, 0);
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(state->widgets.corner_radius), xml_get_int("/labwc_config/theme/cornerradius"));
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.corner_radius, 1, row++, 1, 1);

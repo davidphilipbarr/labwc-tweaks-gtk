@@ -114,7 +114,7 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.prefer_dark), "default");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.prefer_dark), "prefer-dark");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.prefer_dark), "prefer-light");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.prefer_dark), g_settings_get_int(state->settings, "color-scheme"));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.prefer_dark), g_settings_get_enum(state->settings, "color-scheme"));
 	
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.prefer_dark, 1, row++, 1, 1);
 

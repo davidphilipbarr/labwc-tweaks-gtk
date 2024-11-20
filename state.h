@@ -20,7 +20,14 @@ struct state {
 		GtkWidget *top_max;
 		GtkWidget *keyboard_layout;
 		GtkWidget *placement;
-
+		GtkWidget *xwayland_persistence;
+		GtkWidget *allow_tearing;
+		GtkWidget *adaptive_sync;
+		GtkWidget *follow_mouse;
+		GtkWidget *follow_mouse_requires_movement;
+		GtkWidget *raise_on_focus;
+		GtkWidget *prefer_dark;
+		
 	} widgets;
 	GSettings *settings;
 };

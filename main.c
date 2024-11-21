@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include "state.h"
 #include "stack-appearance.h"
+#include "stack-behaviour.h"
 #include "stack-lang.h"
 #include "stack-mouse.h"
 #include "update.h"
@@ -20,7 +21,7 @@ activate(GtkApplication *app, gpointer user_data)
 
 	/* window */
 	state->window = gtk_application_window_new(app);
-	gtk_window_set_title(GTK_WINDOW(state->window), "Tweaks GTK");
+	gtk_window_set_title(GTK_WINDOW(state->window), "Labwc Tweaks GTK");
 
 	/* grid */
 	GtkWidget *grid = gtk_grid_new();
@@ -38,6 +39,7 @@ activate(GtkApplication *app, gpointer user_data)
 	/* sidebar + stack */
 	gtk_stack_sidebar_set_stack(GTK_STACK_SIDEBAR(sidebar), GTK_STACK(stack));
 	stack_appearance_init(state, stack);
+	stack_behaviour_init(state, stack);
 	stack_mouse_init(state, stack);
 	stack_lang_init(state, stack);
 

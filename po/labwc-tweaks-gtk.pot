@@ -1,5 +1,5 @@
-# labwc-tweaks-gtk pot file
-# Copyright (C) 2024
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the labwc-tweaks-gtk package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
@@ -8,21 +8,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: labwc-tweaks-gtk 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/labwc/labwc-tweaks-gtk/issues\n"
-"POT-Creation-Date: 2024-10-20 09:34+1000\n"
+"POT-Creation-Date: 2024-11-21 18:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #. bottom buttons
-#: main.c:45
+#: main.c:47
 msgid "Update"
 msgstr ""
 
-#: main.c:48
+#: main.c:50
 msgid "Quit"
 msgstr ""
 
@@ -58,7 +58,12 @@ msgstr ""
 msgid "Gtk Theme"
 msgstr ""
 
-#: stack-appearance.c:108
+#. Color Scheme - not sure how well this works outside gnome?
+#: stack-appearance.c:106
+msgid "Color Scheme"
+msgstr ""
+
+#: stack-appearance.c:121
 msgid "Icon Theme"
 msgstr ""
 
@@ -88,14 +93,34 @@ msgstr ""
 msgid "Natural Scroll"
 msgstr ""
 
-#: data/labwc-tweaks-gtk.desktop.in:4
+#. double click
+#: stack-mouse.c:65
+msgid "Double Click Time"
+msgstr ""
+
+#. <followMouse>no</followMouse>
+#: stack-mouse.c:75
+msgid "Focus Follow Mouse"
+msgstr ""
+
+#. <followMouseRequiresMovement>yes</followMouseRequiresMovement>
+#: stack-mouse.c:87
+msgid "Follow Mouse Requires Movement"
+msgstr ""
+
+#. <followMouseRequiresMovement>yes</followMouseRequiresMovement>
+#: stack-mouse.c:98
+msgid "Raise On Focus"
+msgstr ""
+
+#: data/labwc-tweaks-gtk.desktop.in:3
 msgid "Labwc Config"
 msgstr ""
 
-#: data/labwc-tweaks-gtk.desktop.in:5
+#: data/labwc-tweaks-gtk.desktop.in:4
 msgid "Labwc Configuration"
 msgstr ""
 
-#: data/labwc-tweaks-gtk.desktop.in:6
+#: data/labwc-tweaks-gtk.desktop.in:5
 msgid "Configure settings for Labwc"
 msgstr ""

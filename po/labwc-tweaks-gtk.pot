@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: labwc-tweaks-gtk 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/labwc/labwc-tweaks-gtk/issues\n"
-"POT-Creation-Date: 2024-11-21 18:47+0000\n"
+"POT-Creation-Date: 2024-11-22 16:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,6 +65,36 @@ msgstr ""
 
 #: stack-appearance.c:121
 msgid "Icon Theme"
+msgstr ""
+
+#.
+#: stack-behaviour.c:24
+msgid "Top Maximize"
+msgstr ""
+
+#. gaps
+#: stack-behaviour.c:34
+msgid "Gap"
+msgstr ""
+
+#. Window Placement
+#: stack-behaviour.c:43
+msgid "Window Placement"
+msgstr ""
+
+#. <adaptiveSync>no</adaptiveSync>
+#: stack-behaviour.c:57
+msgid "Adaptive Sync"
+msgstr ""
+
+#. <allowTearing>no</allowTearing>
+#: stack-behaviour.c:69
+msgid "Allow Tearing"
+msgstr ""
+
+#. <xwaylandPersistence>no</xwaylandPersistence>
+#: stack-behaviour.c:81
+msgid "Xwayland Persistence"
 msgstr ""
 
 #: stack-lang.c:18

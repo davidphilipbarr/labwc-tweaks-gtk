@@ -68,6 +68,7 @@ update(GtkWidget *widget, gpointer data)
 	xml_set("/labwc_config/focus/followMouse", COMBO_TEXT(state->widgets.follow_mouse));
 	xml_set("/labwc_confog/placement/policy", COMBO_TEXT(state->widgets.follow_mouse_requires_movement));
 	xml_set("/labwc_config/focus/raiseOnFocus", COMBO_TEXT(state->widgets.raise_on_focus));
+	xml_set_num("/labwc_config/core/gap", SPIN_BUTTON_VAL(state->widgets.gap));
 	xml_save();
 
 	/* gsettings */

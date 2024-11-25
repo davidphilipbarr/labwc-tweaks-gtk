@@ -34,7 +34,7 @@ the newly generated .pot file in the next step.
 4. From the root of the repository run this:
 ```
 xgettext --keyword=_  --add-comments -o po/labwc-tweaks-gtk.pot main.c \
-stack-appearance.c stack-lang.c stack-mouse.c data/labwc-tweaks-gtk.desktop.in  \
+stack-appearance.c stack-behaviour.c stack-lang.c stack-mouse.c data/labwc-tweaks-gtk.desktop.in  \
 --package-name=labwc-tweaks-gtk --package-version=0.1.0 \
 --msgid-bugs-address=https://github.com/labwc/labwc-tweaks-gtk/issues
 ```

@@ -20,9 +20,6 @@ spawn_sync(char const *command)
 static const char
 *first_field(const char *s, char delim)
 {
-	if (!s) {
-		return NULL;
-	}
 	char *p = strchr(s, delim);
 	if (p) {
 		*p = '\0';
@@ -63,6 +60,18 @@ update(GtkWidget *widget, gpointer data)
 	xml_set("/labwc_config/theme/dropShadows", COMBO_TEXT(state->widgets.drop_shadows));
 	xml_set("/labwc_config/theme/titlebar/layout", (char *)GTK_ENTRY_TEXT(state->widgets.button_layout));
 	xml_set("/labwc_config/theme/titlebar/showTitle", COMBO_TEXT(state->widgets.show_title));
+	xml_set("/labwc_config/snapping/topMaximize", COMBO_TEXT(state->widgets.top_max));
+	xml_set("/labwc_config/placement/policy", COMBO_TEXT(state->widgets.placement ));
+	xml_set("/labwc_config/core/xwaylandPersistence", COMBO_TEXT(state->widgets.xwayland_persistence));
+	xml_set("/labwc_config/core/allowTearing", COMBO_TEXT(state->widgets.allow_tearing));
+	xml_set("/labwc_config/core/adaptiveSync", COMBO_TEXT(state->widgets.adaptive_sync));
+	xml_set("/labwc_config/focus/followMouse", COMBO_TEXT(state->widgets.follow_mouse));
+	xml_set("/labwc_confog/placement/policy", COMBO_TEXT(state->widgets.follow_mouse_requires_movement));
+	xml_set("/labwc_config/focus/raiseOnFocus", COMBO_TEXT(state->widgets.raise_on_focus));
+	xml_set_num("/labwc_config/core/gap", SPIN_BUTTON_VAL(state->widgets.gap));
+        xml_set_num("/labwc_config/resize/cornerRange", SPIN_BUTTON_VAL(state->widgets.corner_range));
+	xml_set("/labwc_config/resize/drawContents", COMBO_TEXT(state->widgets.draw_contents));
+	xml_set("/labwc_config/resize/popupShow", COMBO_TEXT(state->widgets.popup_show));
 	xml_save();
 
 	/* gsettings */
@@ -70,6 +79,8 @@ update(GtkWidget *widget, gpointer data)
 	set_value_num(state->settings, "cursor-size", SPIN_BUTTON_VAL_INT(state->widgets.cursor_size));
 	set_value(state->settings, "gtk-theme", COMBO_TEXT(state->widgets.gtk_theme_name));
 	set_value(state->settings, "icon-theme", COMBO_TEXT(state->widgets.icon_theme_name));
+	set_value(state->settings, "color-scheme", COMBO_TEXT(state->widgets.prefer_dark));
+	
 
 	/* ~/.config/labwc/environment */
 	environment_set("XCURSOR_THEME", COMBO_TEXT(state->widgets.cursor_theme_name));

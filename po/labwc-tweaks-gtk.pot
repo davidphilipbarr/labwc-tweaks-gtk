@@ -1,5 +1,5 @@
-# labwc-tweaks-gtk pot file
-# Copyright (C) 2024
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the labwc-tweaks-gtk package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. bottom buttons
-#: main.c:45
+#: main.c:47
 msgid "Update"
 msgstr ""
 
-#: main.c:48
+#: main.c:50
 msgid "Quit"
 msgstr ""
 
@@ -45,21 +45,78 @@ msgid "Button Layout"
 msgstr ""
 
 #. show title?
-#: stack-appearance.c:62
+#: stack-appearance.c:64
 msgid "Show Title"
 msgstr ""
 
 #. drop shadows
-#: stack-appearance.c:73
+#: stack-appearance.c:75
 msgid "Drop Shadows"
 msgstr ""
 
-#: stack-appearance.c:86
+#: stack-appearance.c:88
 msgid "Gtk Theme"
 msgstr ""
 
+#. Color Scheme - not sure how well this works outside gnome?
 #: stack-appearance.c:108
+msgid "Color Scheme"
+msgstr ""
+
+#: stack-appearance.c:123
 msgid "Icon Theme"
+msgstr ""
+
+#.
+#: stack-behaviour.c:24
+msgid "Top Maximize"
+msgstr ""
+
+#. gaps
+#: stack-behaviour.c:33
+msgid "Gap"
+msgstr ""
+
+#. Window Placement
+#: stack-behaviour.c:42
+msgid "Window Placement"
+msgstr ""
+
+#. <adaptiveSync>no</adaptiveSync>
+#: stack-behaviour.c:56
+msgid "Adaptive Sync"
+msgstr ""
+
+#. <allowTearing>no</allowTearing>
+#: stack-behaviour.c:68
+msgid "Allow Tearing"
+msgstr ""
+
+#. <xwaylandPersistence>no</xwaylandPersistence>
+#: stack-behaviour.c:80
+msgid "Xwayland Persistence"
+msgstr ""
+
+#.
+#. <resize>
+#. <!-- Show a simple resize and move indicator -->
+#. <popupShow>Never</popupShow>
+#. <!-- Let client redraw its contents while resizing -->
+#. <drawContents>yes</drawContents>
+#. <cornerRange>8</cornerRange>
+#. </resize>
+#.
+#: stack-behaviour.c:100
+msgid "Show Resize Popup"
+msgstr ""
+
+#: stack-behaviour.c:110
+msgid "Draw Window Contents"
+msgstr ""
+
+#. corner radius spinbutton
+#: stack-behaviour.c:120
+msgid "Corner Range"
 msgstr ""
 
 #: stack-lang.c:18
@@ -88,14 +145,14 @@ msgstr ""
 msgid "Natural Scroll"
 msgstr ""
 
-#: data/labwc-tweaks-gtk.desktop.in:4
+#: data/labwc-tweaks-gtk.desktop.in:2
 msgid "Labwc Config"
 msgstr ""
 
-#: data/labwc-tweaks-gtk.desktop.in:5
+#: data/labwc-tweaks-gtk.desktop.in:3
 msgid "Labwc Configuration"
 msgstr ""
 
-#: data/labwc-tweaks-gtk.desktop.in:6
+#: data/labwc-tweaks-gtk.desktop.in:4
 msgid "Configure settings for Labwc"
 msgstr ""

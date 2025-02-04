@@ -101,19 +101,6 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.gtk_theme_name, 1, row++, 1, 1);
 	theme_free_vector(&gtk_themes);
 
-	/* Color Scheme - not sure how well this works outside gnome? */
-	
-	widget = gtk_label_new(_("Color Scheme"));
-	gtk_widget_set_halign(widget, GTK_ALIGN_START);
-	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
-	state->widgets.prefer_dark = gtk_combo_box_text_new();
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.prefer_dark), "default");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.prefer_dark), "prefer-dark");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.prefer_dark), "prefer-light");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.prefer_dark), g_settings_get_enum(state->settings, "color-scheme"));
-	gtk_grid_attach(GTK_GRID(grid), state->widgets.prefer_dark, 1, row++, 1, 1);
-
-
 	/* icon theme combobox */
 	struct themes icon_themes = { 0 };
 	theme_find(&icon_themes, "icons", NULL);

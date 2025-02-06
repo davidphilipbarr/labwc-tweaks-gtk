@@ -43,7 +43,9 @@ struct state {
 		    GtkWidget *file_button;
 			    GtkWidget *icon_path;
     GtkWidget *icon_preview;
-
+    GtkWidget *font_button;
+    GtkWidget *active_font_button;
+    GtkWidget *inactive_font_button;
 
 	} widgets;
 	GSettings *settings;

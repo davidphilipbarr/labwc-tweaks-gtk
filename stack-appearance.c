@@ -4,45 +4,12 @@
 #include "stack-appearance.h"
 #include "theme.h"
 #include "xml.h"
-static void on_inactive_font_set(GtkFontButton *button, struct state *state);
-static void on_active_font_set(GtkFontButton *button, struct state *state);
+#include "update.h"
+
 static void on_font_set(GtkFontButton *button, struct state *state)
 {
-	const char *font_desc = gtk_font_button_get_font_name(button);
-	PangoFontDescription *pango_font = pango_font_description_from_string(font_desc);
-
-	// Update font name
-	const char *font_family = pango_font_description_get_family(pango_font);
-	xml_set("/labwc_config/theme/font/name", font_family);
-
-	// Update font size
-	int font_size = pango_font_description_get_size(pango_font) / PANGO_SCALE;
-	char size_str[16];
-	snprintf(size_str, sizeof(size_str), "%d", font_size);
-	xml_set("/labwc_config/theme/font/size", size_str);
-
-	// Update font weight
-	PangoWeight weight = pango_font_description_get_weight(pango_font);
-	xml_set("/labwc_config/theme/font/weight", 
-			(weight >= PANGO_WEIGHT_BOLD) ? "bold" : "normal");
-
-	// Update font slant
-	PangoStyle style = pango_font_description_get_style(pango_font);
-	const char *slant;
-	switch (style) {
-		case PANGO_STYLE_ITALIC:
-			slant = "italic";
-			break;
-		case PANGO_STYLE_OBLIQUE:
-			slant = "oblique";
-			break;
-		default:
-			slant = "normal";
-	}
-	xml_set("/labwc_config/theme/font/slant", slant);
-
-	pango_font_description_free(pango_font);
-	xml_save();
+	// Just trigger the general update function
+	update(NULL, state);
 }
 
 void
@@ -80,7 +47,6 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.openbox_theme_name), active);
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.openbox_theme_name, 1, row++, 1, 1);
 	theme_free_vector(&openbox_themes);
-
 	/* corner radius spinbutton */
 	widget = gtk_label_new(_("Corner Radius"));
 	gtk_widget_set_halign(widget, GTK_ALIGN_START);
@@ -193,104 +159,25 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	const char *font_slant = xml_get("/labwc_config/theme/font/slant");
 	
 	if (font_name) {
+		// Build the font string in Pango format: "Family Weight Style Size"
+		// e.g. "Sans Bold Italic 12"
 		char font_string[256];
-		// Build the font string in Pango format
 		snprintf(font_string, sizeof(font_string), "%s %s %s %s", 
-				font_name,
-				font_size ? font_size : "10",
-				font_weight ? font_weight : "normal",
-				font_slant ? font_slant : "normal");
+			font_name,
+			font_weight ? font_weight : "",  // Bold or nothing
+			font_slant && strcmp(font_slant, "normal") ? font_slant : "",  // Italic/Oblique or nothing
+			font_size ? font_size : "10");
 		
 		gtk_font_button_set_font_name(GTK_FONT_BUTTON(state->widgets.font_button), font_string);
 	} else {
 		// Set a default font if no font is configured
 		gtk_font_button_set_font_name(GTK_FONT_BUTTON(state->widgets.font_button), 
-									"Sans 10");
+			"Sans 10");
 	}
 
 	g_signal_connect(state->widgets.font_button, "font-set", 
 					G_CALLBACK(on_font_set), state);
 	
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.font_button, 1, row++, 1, 1);
-}
-
-static void
-on_active_font_set(GtkFontButton *button, struct state *state)
-{
-	const char *font_desc = gtk_font_button_get_font_name(button);
-	PangoFontDescription *pango_font = pango_font_description_from_string(font_desc);
-
-	// Update font name
-	const char *font_family = pango_font_description_get_family(pango_font);
-	xml_set("/labwc_config/theme/font[@place='ActiveWindow']/name", font_family);
-
-	// Update font size
-	int font_size = pango_font_description_get_size(pango_font) / PANGO_SCALE;
-	char size_str[16];
-	snprintf(size_str, sizeof(size_str), "%d", font_size);
-	xml_set("/labwc_config/theme/font[@place='ActiveWindow']/size", size_str);
-
-	// Update font weight
-	PangoWeight weight = pango_font_description_get_weight(pango_font);
-	xml_set("/labwc_config/theme/font[@place='ActiveWindow']/weight", 
-			(weight >= PANGO_WEIGHT_BOLD) ? "bold" : "normal");
-
-	// Update font slant
-	PangoStyle style = pango_font_description_get_style(pango_font);
-	const char *slant;
-	switch (style) {
-		case PANGO_STYLE_ITALIC:
-			slant = "italic";
-			break;
-		case PANGO_STYLE_OBLIQUE:
-			slant = "oblique";
-			break;
-		default:
-			slant = "normal";
-	}
-	xml_set("/labwc_config/theme/font[@place='ActiveWindow']/slant", slant);
-
-	pango_font_description_free(pango_font);
-	xml_save();
-}
-
-static void
-on_inactive_font_set(GtkFontButton *button, struct state *state)
-{
-	const char *font_desc = gtk_font_button_get_font_name(button);
-	PangoFontDescription *pango_font = pango_font_description_from_string(font_desc);
-
-	// Update font name
-	const char *font_family = pango_font_description_get_family(pango_font);
-	xml_set("/labwc_config/theme/font[@place='InactiveWindow']/name", font_family);
-
-	// Update font size
-	int font_size = pango_font_description_get_size(pango_font) / PANGO_SCALE;
-	char size_str[16];
-	snprintf(size_str, sizeof(size_str), "%d", font_size);
-	xml_set("/labwc_config/theme/font[@place='InactiveWindow']/size", size_str);
-
-	// Update font weight
-	PangoWeight weight = pango_font_description_get_weight(pango_font);
-	xml_set("/labwc_config/theme/font[@place='InactiveWindow']/weight", 
-			(weight >= PANGO_WEIGHT_BOLD) ? "bold" : "normal");
-
-	// Update font slant
-	PangoStyle style = pango_font_description_get_style(pango_font);
-	const char *slant;
-	switch (style) {
-		case PANGO_STYLE_ITALIC:
-			slant = "italic";
-			break;
-		case PANGO_STYLE_OBLIQUE:
-			slant = "oblique";
-			break;
-		default:
-			slant = "normal";
-	}
-	xml_set("/labwc_config/theme/font[@place='InactiveWindow']/slant", slant);
-
-	pango_font_description_free(pango_font);
-	xml_save();
 }
 

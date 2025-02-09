@@ -69,10 +69,47 @@ update(GtkWidget *widget, gpointer data)
 	xml_set("/labwc_confog/placement/policy", COMBO_TEXT(state->widgets.follow_mouse_requires_movement));
 	xml_set("/labwc_config/focus/raiseOnFocus", COMBO_TEXT(state->widgets.raise_on_focus));
 	xml_set_num("/labwc_config/core/gap", SPIN_BUTTON_VAL(state->widgets.gap));
-        xml_set_num("/labwc_config/resize/cornerRange", SPIN_BUTTON_VAL(state->widgets.corner_range));
+    xml_set_num("/labwc_config/resize/cornerRange", SPIN_BUTTON_VAL(state->widgets.corner_range));
 	xml_set("/labwc_config/resize/drawContents", COMBO_TEXT(state->widgets.draw_contents));
 	xml_set("/labwc_config/resize/popupShow", COMBO_TEXT(state->widgets.popup_show));
 	xml_set("/labwc_config/theme/fallbackIcon", GTK_ENTRY_TEXT(state->widgets.icon_path));
+
+	// Get font settings from the font button
+	const char *font_desc = gtk_font_button_get_font_name(GTK_FONT_BUTTON(state->widgets.font_button));
+	PangoFontDescription *pango_font = pango_font_description_from_string(font_desc);
+
+	// Update font name
+	const char *font_family = pango_font_description_get_family(pango_font);
+	xml_set("/labwc_config/theme/font/name", font_family);
+
+	// Update font size
+	int font_size = pango_font_description_get_size(pango_font) / PANGO_SCALE;
+	char size_str[16];
+	snprintf(size_str, sizeof(size_str), "%d", font_size);
+	xml_set("/labwc_config/theme/font/size", size_str);
+
+	// Update font weight
+	PangoWeight weight = pango_font_description_get_weight(pango_font);
+	xml_set("/labwc_config/theme/font/weight", 
+			(weight >= PANGO_WEIGHT_BOLD) ? "bold" : "normal");
+
+	// Update font slant
+	PangoStyle style = pango_font_description_get_style(pango_font);
+	const char *slant;
+	switch (style) {
+		case PANGO_STYLE_ITALIC:
+			slant = "italic";
+			break;
+		case PANGO_STYLE_OBLIQUE:
+			slant = "oblique";
+			break;
+		default:
+			slant = "normal";
+	}
+	xml_set("/labwc_config/theme/font/slant", slant);
+
+	pango_font_description_free(pango_font);
+
 	xml_save();
 
 	/* gsettings */

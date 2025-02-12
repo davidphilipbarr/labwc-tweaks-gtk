@@ -72,6 +72,8 @@ update(GtkWidget *widget, gpointer data)
         xml_set_num("/labwc_config/resize/cornerRange", SPIN_BUTTON_VAL(state->widgets.corner_range));
 	xml_set("/labwc_config/resize/drawContents", COMBO_TEXT(state->widgets.draw_contents));
 	xml_set("/labwc_config/resize/popupShow", COMBO_TEXT(state->widgets.popup_show));
+	xml_set("/labwc_config/theme/fallbackIcon", GTK_ENTRY_TEXT(state->widgets.icon_path));
+		xml_set("/labwc_config/menu/showIcons", GTK_ENTRY_TEXT(state->widgets.show_icons));
 	xml_save();
 
 	/* gsettings */

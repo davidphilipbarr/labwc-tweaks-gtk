@@ -48,6 +48,40 @@ set_value(GSettings *settings, const char *key, const char *value)
 #define SPIN_BUTTON_VAL_INT(w) (int)SPIN_BUTTON_VAL(w)
 #define GTK_ENTRY_TEXT(w) gtk_entry_get_text(GTK_ENTRY(w))
 
+static void save_font_settings(GtkWidget *font_button, const char *place) {
+	const char *font_desc = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(font_button));
+	if (!font_desc) return;
+	
+	PangoFontDescription *pango_font = pango_font_description_from_string(font_desc);
+	
+	// Update font name
+	const char *font_family = pango_font_description_get_family(pango_font);
+	if (!font_family) font_family = "Sans"; // Fallback
+	xpath_set_font_prop(place, "name", font_family);
+	
+	// Update font size
+	int font_size = pango_font_description_get_size(pango_font) / PANGO_SCALE;
+	char size_str[16];
+	snprintf(size_str, sizeof(size_str), "%d", font_size);
+	xpath_set_font_prop(place, "size", size_str);
+	
+	// Update font weight
+	PangoWeight weight = pango_font_description_get_weight(pango_font);
+	xpath_set_font_prop(place, "weight", (weight >= PANGO_WEIGHT_BOLD) ? "bold" : "normal");
+	
+	// Update font slant
+	PangoStyle style = pango_font_description_get_style(pango_font);
+	const char *slant;
+	switch (style) {
+		case PANGO_STYLE_ITALIC: slant = "italic"; break;
+		case PANGO_STYLE_OBLIQUE: slant = "oblique"; break;
+		default: slant = "normal";
+	}
+	xpath_set_font_prop(place, "slant", slant);
+	
+	pango_font_description_free(pango_font);
+}
+
 void
 update(GtkWidget *widget, gpointer data)
 {
@@ -58,7 +92,8 @@ update(GtkWidget *widget, gpointer data)
 	xml_set("/labwc_config/theme/name", COMBO_TEXT(state->widgets.openbox_theme_name));
 	xml_set("/labwc_config/libinput/device/naturalscroll", COMBO_TEXT(state->widgets.natural_scroll));
 	xml_set("/labwc_config/theme/dropShadows", COMBO_TEXT(state->widgets.drop_shadows));
-	xml_set("/labwc_config/theme/titlebar/layout", (char *)GTK_ENTRY_TEXT(state->widgets.button_layout));
+	xml_set("/labwc_config/theme/dropShadowOnTiled", COMBO_TEXT(state->widgets.drop_shadow_tiled));
+	xml_set("/labwc_config/theme/titlebar/layout", GTK_ENTRY_TEXT(state->widgets.button_layout));
 	xml_set("/labwc_config/theme/titlebar/showTitle", COMBO_TEXT(state->widgets.show_title));
 	xml_set("/labwc_config/snapping/topMaximize", COMBO_TEXT(state->widgets.top_max));
 	xml_set("/labwc_config/placement/policy", COMBO_TEXT(state->widgets.placement ));
@@ -66,16 +101,16 @@ update(GtkWidget *widget, gpointer data)
 	xml_set("/labwc_config/core/allowTearing", COMBO_TEXT(state->widgets.allow_tearing));
 	xml_set("/labwc_config/core/adaptiveSync", COMBO_TEXT(state->widgets.adaptive_sync));
 	xml_set("/labwc_config/focus/followMouse", COMBO_TEXT(state->widgets.follow_mouse));
-	xml_set("/labwc_confog/placement/policy", COMBO_TEXT(state->widgets.follow_mouse_requires_movement));
+	xml_set("/labwc_config/focus/followMouseRequiresMovement", COMBO_TEXT(state->widgets.follow_mouse_requires_movement));
 	xml_set("/labwc_config/focus/raiseOnFocus", COMBO_TEXT(state->widgets.raise_on_focus));
 	xml_set_num("/labwc_config/core/gap", SPIN_BUTTON_VAL(state->widgets.gap));
-    xml_set_num("/labwc_config/resize/cornerRange", SPIN_BUTTON_VAL(state->widgets.corner_range));
+        xml_set_num("/labwc_config/resize/cornerRange", SPIN_BUTTON_VAL(state->widgets.corner_range));
 	xml_set("/labwc_config/resize/drawContents", COMBO_TEXT(state->widgets.draw_contents));
 	xml_set("/labwc_config/resize/popupShow", COMBO_TEXT(state->widgets.popup_show));
 	xml_set("/labwc_config/theme/fallbackIcon", GTK_ENTRY_TEXT(state->widgets.icon_path));
 
 	// Get font settings from the font button
-	const char *font_desc = gtk_font_button_get_font_name(GTK_FONT_BUTTON(state->widgets.font_button));
+	const char *font_desc = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(state->widgets.font_button));
 	PangoFontDescription *pango_font = pango_font_description_from_string(font_desc);
 
 	// Update font name
@@ -109,6 +144,17 @@ update(GtkWidget *widget, gpointer data)
 	xml_set("/labwc_config/theme/font/slant", slant);
 
 	pango_font_description_free(pango_font);
+	
+	// Save new fonts
+	save_font_settings(state->widgets.active_font_button, "ActiveWindow");
+	save_font_settings(state->widgets.active_font_button, "InActivewindow");
+
+	save_font_settings(state->widgets.menu_font_button, "Menu");
+	save_font_settings(state->widgets.menu_font_button, "MenuItem");
+	save_font_settings(state->widgets.menu_font_button, "MenuHeader");
+	save_font_settings(state->widgets.menu_font_button, "OnScreenDisplay");
+
+
 
 	xml_save();
 

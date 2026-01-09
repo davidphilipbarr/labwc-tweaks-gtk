@@ -6,6 +6,9 @@
 #include "xml.h"
 #include "update.h"
 
+static void on_font_set(GtkFontButton *button, struct state *state);
+static void setup_font_button(GtkFontButton *button, const char *place);
+
 static void on_font_set(GtkFontButton *button, struct state *state)
 {
 	// Just trigger the general update function
@@ -42,12 +45,39 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 		if (active_id && !strcmp(theme->name, active_id)) {
 			active = i;
 		}
-		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.openbox_theme_name), theme->name);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.openbox_theme_name), theme->name);
 	}
 	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.openbox_theme_name), active);
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.openbox_theme_name, 1, row++, 1, 1);
 	theme_free_vector(&openbox_themes);
+	
+	
+	/* Active Window Font */
+	widget = gtk_label_new(_("Window Title Font"));
+	gtk_widget_set_halign(widget, GTK_ALIGN_START);
+	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
+	state->widgets.active_font_button = gtk_font_button_new();
+	// Default to generic font if not set, or let user pick. 
+	// Ideally we inherit from global if not set, but showing "None" is hard in FontButton.
+	// We'll set it to Sans 10 if missing, matching default behavior.
+	setup_font_button(GTK_FONT_BUTTON(state->widgets.active_font_button), "ActiveWindow");
+	g_signal_connect(state->widgets.active_font_button, "font-set", G_CALLBACK(on_font_set), state);
+	gtk_grid_attach(GTK_GRID(grid), state->widgets.active_font_button, 1, row++, 1, 1);
+
+	/* Menu Font */
+	widget = gtk_label_new(_("Menu Font"));
+	gtk_widget_set_halign(widget, GTK_ALIGN_START);
+	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
+	state->widgets.menu_font_button = gtk_font_button_new();
+	setup_font_button(GTK_FONT_BUTTON(state->widgets.menu_font_button), "Menu");
+	g_signal_connect(state->widgets.menu_font_button, "font-set", G_CALLBACK(on_font_set), state);
+	gtk_grid_attach(GTK_GRID(grid), state->widgets.menu_font_button, 1, row++, 1, 1);
+	
+	
+	
+	
 	/* corner radius spinbutton */
+	
 	widget = gtk_label_new(_("Corner Radius"));
 	gtk_widget_set_halign(widget, GTK_ALIGN_START);
 	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
@@ -55,6 +85,14 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	state->widgets.corner_radius = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment), 1, 0);
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(state->widgets.corner_radius), xml_get_int("/labwc_config/theme/cornerradius"));
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.corner_radius, 1, row++, 1, 1);
+
+
+
+
+
+
+
+
 
         /* button layout */
 	widget = gtk_label_new(_("Button Layout"));
@@ -77,6 +115,9 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.show_title, 1, row++, 1, 1);
 
 
+
+
+
 	/* drop shadows */
 	widget = gtk_label_new(_("Drop Shadows"));
 	gtk_widget_set_halign(widget, GTK_ALIGN_START);
@@ -86,6 +127,18 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.drop_shadows), "yes");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.drop_shadows), xml_get_bool_text("/labwc_config/theme/dropShadows"));
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.drop_shadows, 1, row++, 1, 1);	
+
+        	/* drop shadows */
+	widget = gtk_label_new(_("Drop Shadow on Tiled"));
+	gtk_widget_set_halign(widget, GTK_ALIGN_START);
+	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
+	state->widgets.drop_shadow_tiled = gtk_combo_box_text_new();
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.drop_shadow_tiled), "no");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.drop_shadow_tiled), "yes");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.drop_shadow_tiled), xml_get_bool_text("/labwc_config/theme/dropShadowOnTiled"));
+	gtk_grid_attach(GTK_GRID(grid), state->widgets.drop_shadow_tiled, 1, row++, 1, 1);	
+
+
 
 	/* gtk theme combobox */
 	struct themes gtk_themes = { 0 };
@@ -144,40 +197,34 @@ stack_appearance_init(struct state *state, GtkWidget *stack)
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.icon_theme_name, 1, row++, 1, 1);
 	theme_free_vector(&icon_themes);
 
-	/* Add font button */
-	widget = gtk_label_new(_("Window Font"));
-	gtk_widget_set_halign(widget, GTK_ALIGN_START);
-	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
 
-	// Create font button
-	state->widgets.font_button = gtk_font_button_new();
+
 	
-	// Get the current font values from XML
-	const char *font_name = xml_get("/labwc_config/theme/font/name");
-	const char *font_size = xml_get("/labwc_config/theme/font/size");
-	const char *font_weight = xml_get("/labwc_config/theme/font/weight");
-	const char *font_slant = xml_get("/labwc_config/theme/font/slant");
+}
+
+static void setup_font_button(GtkFontButton *button, const char *place) 
+{
+	char *font_name = xpath_get_font_prop(place, "name");
+	char *font_size = xpath_get_font_prop(place, "size");
+	char *font_weight = xpath_get_font_prop(place, "weight");
+	char *font_slant = xpath_get_font_prop(place, "slant");
 	
 	if (font_name) {
-		// Build the font string in Pango format: "Family Weight Style Size"
-		// e.g. "Sans Bold Italic 12"
 		char font_string[256];
 		snprintf(font_string, sizeof(font_string), "%s %s %s %s", 
 			font_name,
-			font_weight ? font_weight : "",  // Bold or nothing
-			font_slant && strcmp(font_slant, "normal") ? font_slant : "",  // Italic/Oblique or nothing
+			font_weight ? font_weight : "",
+			font_slant && strcmp(font_slant, "normal") ? font_slant : "",
 			font_size ? font_size : "10");
-		
-		gtk_font_button_set_font_name(GTK_FONT_BUTTON(state->widgets.font_button), font_string);
+		gtk_font_chooser_set_font(GTK_FONT_CHOOSER(button), font_string);
 	} else {
-		// Set a default font if no font is configured
-		gtk_font_button_set_font_name(GTK_FONT_BUTTON(state->widgets.font_button), 
-			"Sans 10");
+		// Inherit from global or default? Use Sans 10 for now.
+		gtk_font_chooser_set_font(GTK_FONT_CHOOSER(button), "Sans 10");
 	}
-
-	g_signal_connect(state->widgets.font_button, "font-set", 
-					G_CALLBACK(on_font_set), state);
 	
-	gtk_grid_attach(GTK_GRID(grid), state->widgets.font_button, 1, row++, 1, 1);
+	if (font_name) free(font_name);
+	if (font_size) free(font_size);
+	if (font_weight) free(font_weight);
+	if (font_slant) free(font_slant);
 }
 

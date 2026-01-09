@@ -102,8 +102,35 @@ state->widgets.icon_path = gtk_entry_new();
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.placement), "Cascade");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.placement), xml_get_int("/labwc_config/placement/policy"));
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.placement, 1, row++, 1, 1);
-	
-	
+
+
+	/* Focus */
+	widget = gtk_label_new(_("Follow Mouse"));
+	gtk_widget_set_halign(widget, GTK_ALIGN_START);
+	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
+	state->widgets.follow_mouse = gtk_combo_box_text_new();
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.follow_mouse), "no");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.follow_mouse), "yes");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.follow_mouse), xml_get_bool_text("/labwc_config/focus/followMouse"));
+	gtk_grid_attach(GTK_GRID(grid), state->widgets.follow_mouse, 1, row++, 1, 1);
+
+	widget = gtk_label_new(_("Follow Mouse Requires Movement"));
+	gtk_widget_set_halign(widget, GTK_ALIGN_START);
+	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
+	state->widgets.follow_mouse_requires_movement = gtk_combo_box_text_new();
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.follow_mouse_requires_movement), "no");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.follow_mouse_requires_movement), "yes");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.follow_mouse_requires_movement), xml_get_bool_text("/labwc_config/focus/followMouseRequiresMovement"));
+	gtk_grid_attach(GTK_GRID(grid), state->widgets.follow_mouse_requires_movement, 1, row++, 1, 1);
+
+	widget = gtk_label_new(_("Raise On Focus"));
+	gtk_widget_set_halign(widget, GTK_ALIGN_START);
+	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
+	state->widgets.raise_on_focus = gtk_combo_box_text_new();
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.raise_on_focus), "no");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.raise_on_focus), "yes");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.raise_on_focus), xml_get_bool_text("/labwc_config/focus/raiseOnFocus"));
+	gtk_grid_attach(GTK_GRID(grid), state->widgets.raise_on_focus, 1, row++, 1, 1);
 
   	/*   <adaptiveSync>no</adaptiveSync> */
 		

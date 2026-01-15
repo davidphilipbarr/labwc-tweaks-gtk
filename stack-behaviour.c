@@ -97,10 +97,10 @@ state->widgets.icon_path = gtk_entry_new();
 	gtk_widget_set_halign(widget, GTK_ALIGN_START);
 	gtk_grid_attach(GTK_GRID(grid), widget, 0, row, 1, 1);
 	state->widgets.placement = gtk_combo_box_text_new();
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.placement), "Automatic");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.placement), "Center");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.placement), "Automatic");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.placement), "Cascade");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.placement), xml_get_int("/labwc_config/placement/policy"));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.placement), xml_get_choice("/labwc_config/placement/policy", (const char *[]){"Center", "Automatic", "Cascade", NULL}));
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.placement, 1, row++, 1, 1);
 
 
@@ -185,7 +185,7 @@ state->widgets.icon_path = gtk_entry_new();
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.popup_show), "Nonpixel");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.popup_show), "Always");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(state->widgets.popup_show), "Never");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.popup_show), xml_get_int("/labwc_config/resize/popupShow"));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(state->widgets.popup_show), xml_get_choice("/labwc_config/resize/popupShow", (const char *[]){"Nonpixel", "Always", "Never", NULL}));
 	gtk_grid_attach(GTK_GRID(grid), state->widgets.popup_show, 1, row++, 1, 1);
  
         widget = gtk_label_new(_("Draw Window Contents"));

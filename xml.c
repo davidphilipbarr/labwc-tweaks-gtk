@@ -278,6 +278,22 @@ xml_get_bool_text(const char *nodename)
 	}
 }
 
+int
+xml_get_choice(const char *nodename, const char *choices[])
+{
+	const char *value = xml_get(nodename);
+	if (!value || !*value) {
+		return 0;
+	}
+	for (int i = 0; choices[i]; i++) {
+		if (!strcasecmp(value, choices[i])) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+
 /* case-insensitive */
 static xmlNode *
 xml_get_node(const char *nodename)

@@ -8,7 +8,7 @@ project(
 
 add_project_arguments(['-Wno-unused-parameter'], language: 'c',)
 
-gtkdeps = [dependency('gtk+-3.0'), dependency('libxml-2.0'), dependency('gio-2.0')]
+gtkdeps = [dependency('gtk4'), dependency('libadwaita-1'), dependency('libxml-2.0'), dependency('gio-2.0')]
 
 conf_data = configuration_data()
 
@@ -32,6 +32,7 @@ executable(
     'theme.c',
     'keyboard-layouts.c',
     'stack-appearance.c',
+    'stack-behaviour.c',
     'stack-lang.c',
     'stack-mouse.c',
     'update.c',

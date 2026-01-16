@@ -19,8 +19,8 @@ static struct ctx {
 	char *filename;
 	xmlDoc *doc;
 	xmlXPathContextPtr xpath_ctx_ptr;
-	char *nodename;
-	char *value;
+	const char *nodename;
+	const char *value;
 	xmlNode *node;
 	enum {
 		XML_MODE_SETTING = 0,
@@ -142,6 +142,33 @@ create_basic_rcxml(const char *filename)
 	fclose(file);
 }
 
+/* case-sensitive */
+static xmlNode *
+xpath_get_node(xmlChar *expr)
+{
+	xmlNode *ret = NULL;
+	xmlXPathObjectPtr object = xmlXPathEvalExpression(expr, ctx.xpath_ctx_ptr);
+	if (!object) {
+		fprintf(stderr, "warn: xmlXPathEvalExpression()\n");
+		return NULL;
+	}
+	if (!object->nodesetval) {
+		// fprintf(stderr, "warn: no nodesetval\n");
+		goto out2;
+	}
+
+	for (int i = 0; i < object->nodesetval->nodeNr; i++) {
+		if (!object->nodesetval->nodeTab[i]) {
+			continue;
+		}
+		ret = object->nodesetval->nodeTab[i];
+		break;
+	}
+out2:
+	xmlXPathFreeObject(object);
+	return ret;
+}
+
 void
 xml_setup_nodes(void)
 {
@@ -196,7 +223,7 @@ xml_finish(void)
 }
 
 void
-xml_set(char *nodename, char *value)
+xml_set(const char *nodename, const char *value)
 {
 	ctx.nodename = nodename;
 	ctx.value = value;
@@ -205,7 +232,7 @@ xml_set(char *nodename, char *value)
 }
 
 void
-xml_set_num(char *nodename, double value)
+xml_set_num(const char *nodename, double value)
 {
 	char buf[64];
 	snprintf(buf, sizeof(buf), "%.0f", value);
@@ -216,16 +243,16 @@ xml_set_num(char *nodename, double value)
 }
 
 char *
-xml_get(char *nodename)
+xml_get(const char *nodename)
 {
 	ctx.nodename = nodename;
 	ctx.mode = XML_MODE_GETTING;
 	xml_tree_walk(xmlDocGetRootElement(ctx.doc));
-	return ctx.value;
+	return (char *)ctx.value;
 }
 
 int
-xml_get_int(char *nodename)
+xml_get_int(const char *nodename)
 {
 	ctx.nodename = nodename;
 	ctx.mode = XML_MODE_GETTING;
@@ -234,9 +261,9 @@ xml_get_int(char *nodename)
 }
 
 int
-xml_get_bool_text(char *nodename)
+xml_get_bool_text(const char *nodename)
 {
-	char *value = xml_get(nodename);
+	const char *value = xml_get(nodename);
 
 	/* handle <foo></foo> and <foo /> where no value has been specified */
 	if (!value || !*value) {
@@ -253,7 +280,7 @@ xml_get_bool_text(char *nodename)
 
 /* case-insensitive */
 static xmlNode *
-xml_get_node(char *nodename)
+xml_get_node(const char *nodename)
 {
 	ctx.node = NULL;
 	ctx.nodename = nodename;
@@ -263,7 +290,7 @@ xml_get_node(char *nodename)
 }
 
 char *
-xpath_get_content(char *xpath_expr)
+xpath_get_content(const char *xpath_expr)
 {
 	xmlChar *ret = NULL;
 	xmlXPathObjectPtr object = xmlXPathEvalExpression((xmlChar *)xpath_expr, ctx.xpath_ctx_ptr);
@@ -272,7 +299,7 @@ xpath_get_content(char *xpath_expr)
 		return NULL;
 	}
 	if (!object->nodesetval) {
-		fprintf(stderr, "warn: no nodesetval\n");
+		// fprintf(stderr, "warn: no nodesetval\n");
 		goto out;
 	}
 	for (int i = 0; i < object->nodesetval->nodeNr; i++) {
@@ -283,12 +310,6 @@ xpath_get_content(char *xpath_expr)
 		/* Just grab the first node and go */
 		ret = xmlNodeGetContent(object->nodesetval->nodeTab[i]);
 		goto out;
-
-		/*
-		 * We could process the node here and do things like:
-		 *   xmlNode *children = object->nodesetval->nodeTab[i]->children;
-		 *   for (xmlNode *cur = children; cur; cur = cur->next) { }
-		 */
 	}
 
 out:
@@ -296,35 +317,8 @@ out:
 	return (char *)ret;
 }
 
-/* case-sensitive */
-static xmlNode *
-xpath_get_node(xmlChar *expr)
-{
-	xmlNode *ret = NULL;
-	xmlXPathObjectPtr object = xmlXPathEvalExpression(expr, ctx.xpath_ctx_ptr);
-	if (!object) {
-		fprintf(stderr, "warn: xmlXPathEvalExpression()\n");
-		return NULL;
-	}
-	if (!object->nodesetval) {
-		fprintf(stderr, "warn: no nodesetval\n");
-		goto out2;
-	}
-
-	for (int i = 0; i < object->nodesetval->nodeNr; i++) {
-		if (!object->nodesetval->nodeTab[i]) {
-			continue;
-		}
-		ret = object->nodesetval->nodeTab[i];
-		break;
-	}
-out2:
-	xmlXPathFreeObject(object);
-	return ret;
-}
-
 void
-xpath_add_node(char *xpath_expr)
+xpath_add_node(const char *xpath_expr)
 {
 	if (xml_get_node(xpath_expr)) {
 		return;
@@ -360,4 +354,47 @@ xpath_add_node(char *xpath_expr)
 	}
 	g_free(parent_expr);
 	g_strfreev(nodes);
+}
+
+void xpath_set_font_prop(const char *place, const char *prop, const char *value)
+{
+	char xpath[1024];
+
+	// Try to find the specific prop node first
+	snprintf(xpath, sizeof(xpath), "/labwc_config/theme/font[@place='%s']/%s", place, prop);
+	xmlNode *node = xpath_get_node((xmlChar *)xpath);
+	if (node) {
+		xmlNodeSetContent(node, (const xmlChar *)value);
+		return;
+	}
+
+	// If prop doesn't exist, check if font node exists
+	snprintf(xpath, sizeof(xpath), "/labwc_config/theme/font[@place='%s']", place);
+	xmlNode *font_node = xpath_get_node((xmlChar *)xpath);
+
+	if (!font_node) {
+		// Font node doesn't exist, check theme node to add it to
+		xmlNode *theme_node = xpath_get_node((xmlChar *)"/labwc_config/theme");
+		if (!theme_node) {
+			// If theme doesn't exist, we might be in trouble or need to create it
+			// For robustness, reuse xpath_add_node logic for theme
+			xpath_add_node("/labwc_config/theme");
+			theme_node = xpath_get_node((xmlChar *)"/labwc_config/theme");
+		}
+		if (theme_node) {
+			font_node = xmlNewChild(theme_node, NULL, (xmlChar *)"font", NULL);
+			xmlSetProp(font_node, (xmlChar *)"place", (xmlChar *)place);
+		}
+	}
+
+	if (font_node) {
+		xmlNewChild(font_node, NULL, (xmlChar *)prop, (xmlChar *)value);
+	}
+}
+
+char *xpath_get_font_prop(const char *place, const char *prop)
+{
+	char xpath[1024];
+	snprintf(xpath, sizeof(xpath), "/labwc_config/theme/font[@place='%s']/%s", place, prop);
+	return xpath_get_content(xpath);
 }

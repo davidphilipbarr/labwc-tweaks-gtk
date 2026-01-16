@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 #ifndef STATE_H
 #define STATE_H
-#include <gtk/gtk.h>
+#include <adwaita.h>
 #include "config.h"
 #if HAVE_NLS
 #include <libintl.h>
@@ -13,6 +13,9 @@
 
 struct state {
 	GtkWidget *window;
+	GtkWidget *toast_overlay;
+	GtkWidget *view_stack;
+	GtkWidget *split_view;
 	struct {
 		GtkWidget *corner_radius;
 		GtkWidget *openbox_theme_name;
@@ -23,6 +26,7 @@ struct state {
 		GtkWidget *natural_scroll;
 		GtkWidget *keyboard_layout;
 		GtkWidget *drop_shadows;
+		GtkWidget *drop_shadow_tiled;
 		GtkWidget *button_layout;
 		GtkWidget *show_title;
 		GtkWidget *double_click_time;
@@ -40,10 +44,13 @@ struct state {
 		GtkWidget *draw_contents;		
 		GtkWidget *popup_show;
 		GtkWidget *label;
-		    GtkWidget *file_button;
-			    GtkWidget *icon_path;
-    GtkWidget *icon_preview;
-
+		GtkWidget *file_button;
+	        GtkWidget *icon_path;
+                GtkWidget *icon_preview;
+                GtkWidget *font_button;
+                GtkWidget *active_font_button;
+                GtkWidget *inactive_font_button;
+                GtkWidget *menu_font_button;
 
 	} widgets;
 	GSettings *settings;
